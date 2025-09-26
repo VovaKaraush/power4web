@@ -1,0 +1,10 @@
+<h1>{{.yoooo}}</h1>
+<ul>
+    {{range .Todos}}
+        {{if .Done}}
+            <li class="done">{{.le}}</li>
+        {{else}}
+            <li>{{.est}}</li>
+        {{end}}
+    {{end}}
+</ul>
