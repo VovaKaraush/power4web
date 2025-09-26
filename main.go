@@ -1,32 +1,30 @@
 package main
 
 import (
-	"html/template"
-	"net/http"
+	"log"
+
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
-type Todo struct {
-	Title string
-	Done  bool
+type Game struct{}
+
+func (g *Game) Update() error {
+	return nil
 }
 
-type TodoPageData struct {
-	PageTitle string
-	Todos     []Todo
+func (g *Game) Draw(screen *ebiten.Image) {
+	ebitenutil.DebugPrint(screen, "Hello, World!")
+}
+
+func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
+	return 320, 240
 }
 
 func main() {
-	tmpl := template.Must(template.ParseFiles("layout.html"))
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		data := TodoPageData{
-			PageTitle: "My TODO list",
-			Todos: []Todo{
-				{Title: "Task 1", Done: false},
-				{Title: "Task 2", Done: true},
-				{Title: "Task 3", Done: true},
-			},
-		}
-		tmpl.Execute(w, data)
-	})
-	http.ListenAndServe(":8080", nil)
+	ebiten.SetWindowSize(1280, 960)
+	ebiten.SetWindowTitle("Hello, World!")
+	if err := ebiten.RunGame(&Game{}); err != nil {
+		log.Fatal(err)
+	}
 }
