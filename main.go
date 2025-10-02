@@ -1,30 +1,31 @@
 package main
 
 import (
-	"html/template"
 	"net/http"
+	"text/template"
 )
 
-type Todo struct {
-	Title string
-	Done  bool
+type Game struct {
+	Board         [6][7]int // 0=vide, 1=rouge, 2=jaune
+	CurrentPlayer int
 }
 
-type TodoPageData struct {
-	PageTitle string
-	Todos     []Todo
+type GamePageData struct {
+	PageTitle     string
+	Board         [6][7]int
+	CurrentPlayer int
+	Winner        int
 }
 
 func main() {
 	tmpl := template.Must(template.ParseFiles("layout.html"))
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		data := TodoPageData{
-			PageTitle: "My TODO list",
-			Todos: []Todo{
-				{Title: "Task 1", Done: false},
-				{Title: "Task 2", Done: true},
-				{Title: "Task 3", Done: true},
-			},
+		Board := 1
+		data := GamePageData{
+			PageTitle:     "Puissance 4",
+			Board:         Game.Board,
+			CurrentPlayer: Game.CurrentPlayer,
+			Winner:        CheckWinner(),
 		}
 		tmpl.Execute(w, data)
 	})
