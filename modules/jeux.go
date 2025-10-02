@@ -2,7 +2,7 @@ package modules
 
 func Game() {
 	column1 := [6]int{1, 0, 0, 0, 0, 0} //les colonnes. 0 = vide; 1 = joueur1; 2 = joueur2
-	clmn1cnt := 0                       // count of pieces in the row
+	clmn1cnt := 0 // count of pieces in the row
 	column2 := [6]int{0, 0, 0, 0, 0, 0}
 	clmn2cnt := 0 // count of pieces in the row
 	column3 := [6]int{0, 0, 0, 0, 0, 0}

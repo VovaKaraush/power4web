@@ -1,10 +1,12 @@
-<h1>{{.PageTitle}}</h1>
-<ul>
-    {{range .Todos}}
-        {{if .Done}}
-            <li class="done">{{.le}}</li>
-        {{else}}
-            <li>{{.est}}</li>
-        {{end}}
-    {{end}}
-</ul>
+<h1>{{ .PageTitle }}</h1>
+<table>
+    {{ range $i, $row := .Board }}
+    <tr>
+        {{ range $j, $cell := $row }}
+        <td>
+            {{ if eq $cell 1 }}🔴{{ else if eq $cell 2 }}🟡{{ else }}⚪{{ end }}
+        </td>
+        {{ end }}
+    </tr>
+    {{ end }}
+</table>
