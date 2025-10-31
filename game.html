@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Puissance 4</title>
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            background-color: #f0f0f0;
+        }
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #0066cc;
+            padding: 10px;
+        }
+        td {
+            width: 60px;
+            height: 60px;
+            text-align: center;
+            font-size: 40px;
+        }
+        button {
+            width: 60px;
+            height: 40px;
+            margin: 2px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Puissance 4</h1>
+    
+    {{if eq .Winner 0}}
+        <p>Joueur {{.Player}} : {{if eq .Player 1}}🔴{{else}}🟡{{end}}</p>
+        
+        <div>
+            <form method="POST" action="/play" style="display: inline;">
+                <input type="hidden" name="column" value="0">
+                <button type="submit">↓</button>
+            </form>
+            <form method="POST" action="/play" style="display: inline;">
+                <input type="hidden" name="column" value="1">
+                <button type="submit">↓</button>
+            </form>
+            <form method="POST" action="/play" style="display: inline;">
+                <input type="hidden" name="column" value="2">
+                <button type="submit">↓</button>
+            </form>
+            <form method="POST" action="/play" style="display: inline;">
+                <input type="hidden" name="column" value="3">
+                <button type="submit">↓</button>
+            </form>
+            <form method="POST" action="/play" style="display: inline;">
+                <input type="hidden" name="column" value="4">
+                <button type="submit">↓</button>
+            </form>
+            <form method="POST" action="/play" style="display: inline;">
+                <input type="hidden" name="column" value="5">
+                <button type="submit">↓</button>
+            </form>
+            <form method="POST" action="/play" style="display: inline;">
+                <input type="hidden" name="column" value="6">
+                <button type="submit">↓</button>
+            </form>
+        </div>
+    {{else}}
+        <p>🎉 Joueur {{.Winner}} a gagne !</p>
+    {{end}}
+
+    <table>
+        {{range .Board}}
+        <tr>
+            {{range .}}
+            <td>
+                {{if eq . 0}}⚪{{else if eq . 1}}🔴{{else}}🟡{{end}}
+            </td>
+            {{end}}
+        </tr>
+        {{end}}
+    </table>
+
+    {{if ne .Winner 0}}
+    <form method="POST" action="/reset">
+        <button type="submit">Nouvelle partie</button>
+    </form>
+    {{end}}
+
+</body>
+</html>

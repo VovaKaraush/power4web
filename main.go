@@ -1,12 +1,19 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"html/template"
+	"net/http"
+	"strconv"
+)
 
 type Game struct {
 	Board  [][]int // Plateau 6x7 || Horizontales X Verticales || lignes X colonnes
 	Player int     // Joueur actuel (1 ou 2)
 	Winner int     // 0 = pas de gagnant, 1 ou 2 = gagnant
 }
+
+var game *Game
 
 func NewGame() *Game { // le tableau est formé en descendant sa generation ressemble a une fleche en diagonale-
 	board := make([][]int, 6)
@@ -17,8 +24,9 @@ func NewGame() *Game { // le tableau est formé en descendant sa generation ress
 }
 
 func (g *Game) PutPiece(col int, player int) bool { // va renvoyer un bool, vrai pour signaler la reussite de l'operation,
-	for i := 5; i > 0; i-- { // si renvoit false ca veut dire que la collonne choisie etait pleine
+	for i := 5; i >= 0; i-- { // si renvoit false ca veut dire que la collonne choisie etait pleine
 		if g.Board[i][col] == 0 {
+			g.Board[i][col] = player
 			return true
 		}
 	}
@@ -41,8 +49,8 @@ func (g *Game) checkWin() int { //horizontal then vertical then diagonal+ and th
 				}
 			}
 		}
-		return 0
 	}
+	return 0
 }
 
 func InputScan() int {
@@ -50,18 +58,50 @@ func InputScan() int {
 	_, err := fmt.Scanln(&x)
 	if err != nil {
 		fmt.Println("Entrée invalide, réessaie.")
-		AssignValue()
+		return InputScan()
 	}
 	return x
 }
 
-func main() {
-	var game *Game = NewGame()
-	for game.Winner == 0 {
-		fmt.Print("Joueur ")
-		fmt.Print(game.Player)
-		fmt.Print(" choisis la colonne dans laquelle tu veux mettre la piece")
-		x := InputScan()
-		game.PutPiece(x, game.Player)
+// Handlers pour le serveur web
+func homeHandler(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.ParseFiles("game.html"))
+	tmpl.Execute(w, game)
+}
+
+func playHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" && game.Winner == 0 {
+		colStr := r.FormValue("column")
+		col, _ := strconv.Atoi(colStr)
+		
+		if col >= 0 && col < 7 {
+			if game.PutPiece(col, game.Player) {
+				game.Winner = game.checkWin()
+				if game.Winner == 0 {
+					if game.Player == 1 {
+						game.Player = 2
+					} else {
+						game.Player = 1
+					}
+				}
+			}
+		}
 	}
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func resetHandler(w http.ResponseWriter, r *http.Request) {
+	game = NewGame()
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func main() {
+	game = NewGame()
+	
+	http.HandleFunc("/", homeHandler)
+	http.HandleFunc("/play", playHandler)
+	http.HandleFunc("/reset", resetHandler)
+	
+	fmt.Println("Serveur démarré sur http://localhost:8080")
+	http.ListenAndServe(":8080", nil)
 }
