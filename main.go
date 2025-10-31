@@ -33,20 +33,47 @@ func (g *Game) PutPiece(col int, player int) bool { // va renvoyer un bool, vrai
 	return false
 }
 
-func (g *Game) checkWin() int { //horizontal then vertical then diagonal+ and then diagonal-
-	for col := 0; col < 6; col++ { // verticales
-		for lgn := 5; lgn >= 0; lgn-- { // horizontales
-			if g.Board[lgn][col] != 0 {
-				checked := g.Board[lgn][col]
-				if g.Board[lgn][col] == g.Board[lgn][col+1] && g.Board[lgn][col+1] == g.Board[lgn][col+2] && g.Board[lgn][col+2] == g.Board[lgn][col+3] { // check de win horizontal
-					return (checked)
-				} else if g.Board[lgn][col] == g.Board[lgn+1][col] && g.Board[lgn+1][col] == g.Board[lgn+2][col] && g.Board[lgn+2][col] == g.Board[lgn+3][col] { // check horizontal
-					return (checked)
-				} else if g.Board[lgn][col] == g.Board[lgn+1][col+1] && g.Board[lgn+1][col+1] == g.Board[lgn+2][col] && g.Board[lgn+2][col+2] == g.Board[lgn+3][col+3] { // check diagonal +
-					return (checked)
-				} else if g.Board[lgn][col] == g.Board[lgn-1][col+1] && g.Board[lgn-1][col+1] == g.Board[lgn-2][col] && g.Board[lgn-2][col+2] == g.Board[lgn-3][col+3] { // check diagonal -
-					return (checked)
-				}
+func (g *Game) checkWin() int {
+	rows := len(g.Board)
+	cols := len(g.Board[0])
+
+	for lgn := 0; lgn < rows; lgn++ {
+		for col := 0; col < cols; col++ {
+			player := g.Board[lgn][col]
+			if player == 0 {
+				continue
+			}
+
+			// Horizontal
+			if col <= cols-4 &&
+				player == g.Board[lgn][col+1] &&
+				player == g.Board[lgn][col+2] &&
+				player == g.Board[lgn][col+3] {
+				return player
+			}
+
+			// Vertical
+			if lgn <= rows-4 &&
+				player == g.Board[lgn+1][col] &&
+				player == g.Board[lgn+2][col] &&
+				player == g.Board[lgn+3][col] {
+				return player
+			}
+
+			// Diagonal \
+			if lgn <= rows-4 && col <= cols-4 &&
+				player == g.Board[lgn+1][col+1] &&
+				player == g.Board[lgn+2][col+2] &&
+				player == g.Board[lgn+3][col+3] {
+				return player
+			}
+
+			// Diagonal /
+			if lgn >= 3 && col <= cols-4 &&
+				player == g.Board[lgn-1][col+1] &&
+				player == g.Board[lgn-2][col+2] &&
+				player == g.Board[lgn-3][col+3] {
+				return player
 			}
 		}
 	}
@@ -73,17 +100,10 @@ func playHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" && game.Winner == 0 {
 		colStr := r.FormValue("column")
 		col, _ := strconv.Atoi(colStr)
-		
+
 		if col >= 0 && col < 7 {
 			if game.PutPiece(col, game.Player) {
 				game.Winner = game.checkWin()
-				if game.Winner == 0 {
-					if game.Player == 1 {
-						game.Player = 2
-					} else {
-						game.Player = 1
-					}
-				}
 			}
 		}
 	}
@@ -97,11 +117,11 @@ func resetHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	game = NewGame()
-	
+
 	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/play", playHandler)
 	http.HandleFunc("/reset", resetHandler)
-	
+
 	fmt.Println("Serveur démarré sur http://localhost:8080")
 	http.ListenAndServe(":8080", nil)
 }
