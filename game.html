@@ -36,31 +36,31 @@
         <p>Joueur {{.Player}} : {{if eq .Player 1}}🔴{{else}}🟡{{end}}</p>
         
         <div>
-            <form method="POST" action="/play" style="display: inline;">
+            <form method="POST" action="/" style="display: inline;">
                 <input type="hidden" name="column" value="0">
                 <button type="submit">↓</button>
             </form>
-            <form method="POST" action="/play" style="display: inline;">
+            <form method="POST" action="/" style="display: inline;">
                 <input type="hidden" name="column" value="1">
                 <button type="submit">↓</button>
             </form>
-            <form method="POST" action="/play" style="display: inline;">
+            <form method="POST" action="/" style="display: inline;">
                 <input type="hidden" name="column" value="2">
                 <button type="submit">↓</button>
             </form>
-            <form method="POST" action="/play" style="display: inline;">
+            <form method="POST" action="/" style="display: inline;">
                 <input type="hidden" name="column" value="3">
                 <button type="submit">↓</button>
             </form>
-            <form method="POST" action="/play" style="display: inline;">
+            <form method="POST" action="/" style="display: inline;">
                 <input type="hidden" name="column" value="4">
                 <button type="submit">↓</button>
             </form>
-            <form method="POST" action="/play" style="display: inline;">
+            <form method="POST" action="/" style="display: inline;">
                 <input type="hidden" name="column" value="5">
                 <button type="submit">↓</button>
             </form>
-            <form method="POST" action="/play" style="display: inline;">
+            <form method="POST" action="/" style="display: inline;">
                 <input type="hidden" name="column" value="6">
                 <button type="submit">↓</button>
             </form>
@@ -82,7 +82,8 @@
     </table>
 
     {{if ne .Winner 0}}
-    <form method="POST" action="/reset">
+    <form method="POST" action="/">
+        <input type="hidden" name="reset" value="true">
         <button type="submit">Nouvelle partie</button>
     </form>
     {{end}}

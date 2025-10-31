@@ -65,43 +65,41 @@ func InputScan() int {
 
 // Handlers pour le serveur web
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("game.html"))
-	tmpl.Execute(w, game)
-}
-
-func playHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "POST" && game.Winner == 0 {
-		colStr := r.FormValue("column")
-		col, _ := strconv.Atoi(colStr)
-		
-		if col >= 0 && col < 7 {
-			if game.PutPiece(col, game.Player) {
-				game.Winner = game.checkWin()
-				if game.Winner == 0 {
-					if game.Player == 1 {
-						game.Player = 2
-					} else {
-						game.Player = 1
+	if r.Method == "POST" { 
+		// Reset
+		if r.FormValue("reset") == "true" {
+			game = NewGame()
+		} else if game.Winner == 0 {
+			// Jouer
+			colStr := r.FormValue("column")
+			col, _ := strconv.Atoi(colStr)
+			
+			if col >= 0 && col < 7 {
+				if game.PutPiece(col, game.Player) {
+					game.Winner = game.checkWin()
+					if game.Winner == 0 {
+						if game.Player == 1 {
+							game.Player = 2
+						} else {
+							game.Player = 1
+						}
 					}
 				}
 			}
 		}
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
 	}
-	http.Redirect(w, r, "/", http.StatusSeeOther)
-}
-
-func resetHandler(w http.ResponseWriter, r *http.Request) {
-	game = NewGame()
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	
+	tmpl := template.Must(template.ParseFiles("game.html"))
+	tmpl.Execute(w, game)
 }
 
 func main() {
 	game = NewGame()
 	
 	http.HandleFunc("/", homeHandler)
-	http.HandleFunc("/play", playHandler)
-	http.HandleFunc("/reset", resetHandler)
-	
+
 	fmt.Println("Serveur démarré sur http://localhost:8080")
 	http.ListenAndServe(":8080", nil)
 }
