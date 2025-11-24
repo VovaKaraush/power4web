@@ -27,6 +27,7 @@ func (g *Game) PutPiece(col int, player int) bool { // va renvoyer un bool, vrai
 	for i := 5; i >= 0; i-- { // si renvoit false ca veut dire que la collonne choisie etait pleine
 		if g.Board[i][col] == 0 {
 			g.Board[i][col] = player
+			g.Player = 3 - g.Player	
 			return true
 		}
 	}
