@@ -6,8 +6,6 @@ type Game struct {
 	Winner int     // 0 = pas de gagnant, 1 ou 2 = gagnant
 }
 
-var game *Game
-
 func NewGame() *Game { // le tableau est formé en descendant sa generation ressemble a une fleche en diagonale-
 	board := make([][]int, 6)
 	for i := range board {
