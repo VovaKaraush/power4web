@@ -1,9 +1,5 @@
 package game
 
-import (
-	"fmt"
-)
-
 type Game struct {
 	Board  [][]int // Plateau 6x7 || Horizontales X Verticales || lignes X colonnes
 	Player int     // Joueur actuel (1 ou 2)
@@ -76,14 +72,4 @@ func (g *Game) CheckWin() int {
 		}
 	}
 	return 0
-}
-
-func InputScan() int {
-	var x int
-	_, err := fmt.Scanln(&x)
-	if err != nil {
-		fmt.Println("Entrée invalide, réessaie.")
-		return InputScan()
-	}
-	return x
 }
